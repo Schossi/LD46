@@ -1,39 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CamLook : MonoBehaviour
 {
-    [SerializeField]
-    public float sensitivity = 5.0f;
-    [SerializeField]
-    public float smoothing = 2.0f;
-    // the chacter is the capsule
-    public GameObject character;
-    // get the incremental value of mouse moving
-    private Vector2 mouseLook;
-    // smooth the mouse moving
-    private Vector2 smoothV;
+    public float sensitivityX = 15F;
+    public float sensitivityY = 15F;
+    public float minimumX = -360F;
+    public float maximumX = 360F;
+    public float minimumY = -90F;
+    public float maximumY = 60F;
+    float rotationX = 0F;
+    float rotationY = 0F;
+    Quaternion originalRotation;
 
-    // Use this for initialization
     void Start()
     {
-        character = this.transform.parent.gameObject;
+        originalRotation = transform.localRotation;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // md is mosue delta
-        var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-        md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
-        // the interpolated float result between the two float values
-        smoothV.x = Mathf.Lerp(smoothV.x, md.x, 1f / smoothing);
-        smoothV.y = Mathf.Lerp(smoothV.y, md.y, 1f / smoothing);
-        // incrementally add to the camera look
-        mouseLook += smoothV;
+        if (!MouseLock.IsLocked)
+            return;
 
-        // vector3.right means the x-axis
-        transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
-        character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
+        // Read the mouse input axis
+        rotationX += Input.GetAxis("Mouse X") * sensitivityX;
+        rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
+        rotationX = ClampAngle(rotationX, minimumX, maximumX);
+        rotationY = ClampAngle(rotationY, minimumY, maximumY);
+        Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+        Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
+        transform.localRotation = originalRotation * xQuaternion * yQuaternion;
+    }
+
+    public static float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360F)
+            angle += 360F;
+        if (angle > 360F)
+            angle -= 360F;
+        return Mathf.Clamp(angle, min, max);
     }
 }

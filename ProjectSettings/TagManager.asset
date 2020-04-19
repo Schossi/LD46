@@ -13,12 +13,12 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Terrain
+  - Bounds
+  - Enemy
+  - PlayerImpact
+  - KillZone
   - 
   - 
   - 
