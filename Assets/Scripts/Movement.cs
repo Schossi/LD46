@@ -38,7 +38,10 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y < -10)
+        if (Input.GetKeyDown(KeyCode.Backspace))
+            Respawn();
+
+        if (transform.position.y < -10f)
             Respawn();
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
@@ -136,6 +139,6 @@ public class Movement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.CheckSphere(transform.position, 0.5f, LayerMask.GetMask("Terrain"));
+        return Physics.CheckSphere(transform.position, 0.5f, LayerMask.GetMask("Terrain","BoundsBottom"));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class Tree : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class Tree : MonoBehaviour
         foreach (var tree in Trees)
         {
             var maxDistance = (dire ? 30f : 50f);
-            
+
             if (Vector3.Distance(tree.transform.position, position) <= maxDistance)
             {
                 if (tree.IsSpecial && dire)
@@ -44,6 +45,14 @@ public class Tree : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameOver && IsSpecial && Input.GetKeyDown(KeyCode.Return))
+        {
+            GameOver = false;
+            _trees.Clear();
+            Enemy.Active = 0;
+            Enemy.Score = 0;
 
+            SceneManager.LoadScene(0);
+        }
     }
 }

@@ -19,7 +19,7 @@ TagManager:
   - Enemy
   - PlayerImpact
   - KillZone
-  - 
+  - BoundsBottom
   - 
   - 
   - 

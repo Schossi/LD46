@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
         _body = GetComponent<Rigidbody>();
         _parts = GetComponent<ParticleSystem>();
 
-        _jumpTimer = Random.Range(1.5f, 3.5f);
+        _jumpTimer = 0f;// Random.Range(1.5f, 3.5f);
     }
 
     // Update is called once per frame
