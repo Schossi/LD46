@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;
 
 public class Movement : MonoBehaviour
 {
     public GameObject ImpactTemplate;
+
+    public Volume PostProcessing;
+    private PaniniProjection _paniniProjection;
+    private LensDistortion _lensDistortion;
 
     public Transform DashTarget;
     public Transform Head;
@@ -18,6 +24,8 @@ public class Movement : MonoBehaviour
 
     private bool _jump = false;
 
+    private AudioSource _dashAudio;
+
     private Vector3? _currentDashTarget;
     private float _currentDashHeight;
 
@@ -28,6 +36,15 @@ public class Movement : MonoBehaviour
     {
         ImpactTemplate.SetActive(false);
         _spawnPosition = transform.position;
+
+        _dashAudio = DashTarget.GetComponent<AudioSource>();
+
+        PaniniProjection panini;
+        LensDistortion lens;
+        PostProcessing.profile.TryGet(out panini);
+        PostProcessing.profile.TryGet(out lens);
+        _paniniProjection = panini;
+        _lensDistortion = lens;
     }
 
     public void Respawn()
@@ -46,6 +63,7 @@ public class Movement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
+            GetComponent<AudioSource>().Play();
             _jump = true;
         }
 
@@ -67,18 +85,22 @@ public class Movement : MonoBehaviour
 
                 if (Input.GetButtonDown("Fire1"))
                 {
+                    _paniniProjection.distance.value = 1.0f;
+                    _lensDistortion.intensity.value = 0.5f;
                     _currentDashTarget = hit.point;
                     _currentDashHeight = dashHeight;
+                    _dashAudio.Play();
                 }
             }
         }
 
-        if (MouseLock.IsLocked && Input.GetButton("Fire2"))
+        if (MouseLock.IsLocked && Input.GetButton("Fire2") && !_currentDashTarget.HasValue)
         {
             RaycastHit poundHit;
             if (Physics.Raycast(new Ray(transform.position, Vector3.down), out poundHit, float.MaxValue, LayerMask.GetMask("Terrain")) && poundHit.distance > 1f)
             {
                 _currentDashTarget = poundHit.point;
+                _dashAudio.Play();
             }
         }
     }
@@ -110,6 +132,9 @@ public class Movement : MonoBehaviour
                 impact.SetActive(true);
 
                 _currentDashTarget = null;
+
+                _paniniProjection.distance.value = 0.0f;
+                _lensDistortion.intensity.value = 0.0f;
             }
             else
             {

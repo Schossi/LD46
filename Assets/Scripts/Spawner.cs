@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour
 
     private int _stage = 0;
 
-    private float _timeout = 10f;
+    private float _timeout = 5f;
 
     // Use this for initialization
     void Start()
@@ -22,7 +22,7 @@ public class Spawner : MonoBehaviour
         if (Input.GetKeyDown("x"))
             SpawnStage(10);
 
-        if (Enemy.Active == 0 || _timeout <= 0f)
+        if ((_stage > 0 && Enemy.Active == 0) || _timeout <= 0f)
         {
             _stage++;
             _timeout = SpawnStage(_stage);
@@ -35,6 +35,8 @@ public class Spawner : MonoBehaviour
 
     private float SpawnStage(int stage)
     {
+        GetComponent<AudioSource>().Play();
+
         switch (stage)
         {
             case 1:
@@ -63,7 +65,7 @@ public class Spawner : MonoBehaviour
                 return 60f;
             default:
 
-                for (int i = 0; i < stage+2; i++)
+                for (int i = 0; i < stage + 2; i++)
                 {
                     spawnEnemy();
                 }

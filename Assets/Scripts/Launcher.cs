@@ -21,7 +21,7 @@ public class Launcher : MonoBehaviour
     {
         var position = Random.Range(0, 600);
 
-        enemy.transform.position= transform.position + transform.forward * position;
-        enemy.GetComponent<Rigidbody>().AddForce(transform.up * Force, ForceMode.Impulse);
+        enemy.transform.position = transform.position + transform.forward * position;
+        enemy.GetComponent<Rigidbody>().AddForce(transform.up * Random.Range(Force - 5, Force + 5), ForceMode.Impulse);
     }
 }

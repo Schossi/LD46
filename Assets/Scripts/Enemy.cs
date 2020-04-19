@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     private bool _jump;
 
     private ParticleSystem _parts;
+    private AudioSource _audioSource;
 
     // Use this for initialization
     void Start()
@@ -20,6 +21,7 @@ public class Enemy : MonoBehaviour
 
         _body = GetComponent<Rigidbody>();
         _parts = GetComponent<ParticleSystem>();
+        _audioSource = GetComponent<AudioSource>();
 
         _jumpTimer = 0f;// Random.Range(1.5f, 3.5f);
     }
@@ -27,13 +29,14 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (IsGrounded())
             _jumpTimer -= Time.deltaTime;
+     
         if (_jumpTimer < 0f)
         {
             _jumpTimer = Random.Range(1.5f, 3.5f);
             _jump = true;
+            _audioSource.Play();
         }
 
         if (transform.position.y < -10f)
@@ -52,7 +55,11 @@ public class Enemy : MonoBehaviour
         {
             _parts.Play();
             TerrainModifier.Instance.CoverArea(transform.position, 12, true);
-            _body.AddForce((Holy.Instance.transform.position - transform.position).normalized * Random.Range(10f, 50f), ForceMode.Impulse);
+
+            var direction = (Holy.Instance.transform.position - transform.position);
+            direction = new Vector3(direction.x, direction.y + 0.1f, direction.z);
+
+            _body.AddForce(direction.normalized * Random.Range(25f, 60f), ForceMode.Impulse);
             _jump = false;
         }
     }
